@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'harshu6397/work-finder-backend'
+    container_name: 'work-finder-backend'
+    ports:
+      - '4000:4000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    command: npm run dev
+    
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - '27018:27017'
+    volumes:
+      - ./data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data:
+  node_modules:
+    driver: local
