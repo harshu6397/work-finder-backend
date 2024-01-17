@@ -18,11 +18,10 @@ export const typeDefs = `#graphql
     }
 
     type UserProfile {
-        id: ID!
         personalInformation: PersonalInformation
         professionalInformation: ProfessionalInformation
-        educationalBackground: EducationalBackground
-        workExperience: WorkExperience
+        educationalBackground: [EducationalBackground]
+        workExperience: [WorkExperience]
         skills: Skills
         availability: Availability
     }
@@ -31,8 +30,6 @@ export const typeDefs = `#graphql
         firstName: String
         lastName: String
         address: String
-        phoneNumber: String
-        emailAddress: String
     }
 
     type ProfessionalInformation {
@@ -69,7 +66,7 @@ export const typeDefs = `#graphql
 
     type UserResponse { 
         success: Boolean!
-        message: String
+        message: String!
         data: ResponseData
         token: String
     }   
@@ -83,18 +80,15 @@ export const typeDefs = `#graphql
     input UserProfileInput {
         personalInformation: PersonalInformationInput
         professionalInformation: ProfessionalInformationInput
-        educationalBackground: EducationalBackgroundInput
-        workExperience: WorkExperienceInput
+        educationalBackground: [EducationalBackgroundInput]
+        workExperience: [WorkExperienceInput]
         skills: SkillsInput
-        availability: AvailabilityInput
+        availability: AvailabilityInput 
     }
-
     input PersonalInformationInput {
         firstName: String
         lastName: String
         address: String
-        phoneNumber: String
-        emailAddress: String
     }
 
     input ProfessionalInformationInput {
@@ -120,8 +114,13 @@ export const typeDefs = `#graphql
     }
 
     input SkillsInput {
-        technicalSkills: String
-        softSkills: String
+        technicalSkills: [Skill]
+        softSkills: [Skill]
+    }
+
+    input Skill {
+        name: String
+        experience: String
     }
 
     input AvailabilityInput {

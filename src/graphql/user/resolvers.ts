@@ -1,5 +1,5 @@
-import { createUserSchema, loginUserSchema } from '../../validations';
-import { LoginInput, RegisterInput } from '../../interfaces/user';
+import { createUserSchema, loginUserSchema, updateUserProfileSchema } from '../../validations';
+import { LoginInput, RegisterInput, UserProfileInput } from '../../interfaces/user';
 import { GraphQLError } from 'graphql';
 import { successResponse } from '../../handlers/responses';
 import { validateUserInput } from '../../handlers/validate';
@@ -60,6 +60,23 @@ const mutations = {
             return new GraphQLError(error);
         }
     },
+
+    updateUserProfile: async (_: any, { userInput }: { userInput: UserProfileInput }, contextValue: any) => {
+        try {
+            console.log(contextValue)
+            // Validate user input
+            validateUserInput(userInput, updateUserProfileSchema);
+
+            const response = await UserService.updateProfile(userInput, contextValue.email);
+
+            return successResponse(
+                response.success,
+                response.message,
+            );
+        } catch (error: any) {
+            return new GraphQLError(error);
+        }
+    }
 }
 
 export const resolvers = {

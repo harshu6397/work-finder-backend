@@ -7,22 +7,10 @@ interface User {
     profile?: string;
 }
 
-interface UserProfile {
-    id: string;
-    personalInformation: PersonalInformation;
-    professionalInformation: ProfessionalInformation;
-    educationalBackground: EducationalBackground;
-    workExperience: WorkExperience;
-    skills: Skills;
-    availability: Availability;
-}
-
 interface PersonalInformation {
     firstName: string;
     lastName: string;
     address: string;
-    phoneNumber: string;
-    emailAddress: string;
 }
 
 interface ProfessionalInformation {
@@ -48,13 +36,18 @@ interface WorkExperience {
 }
 
 interface Skills {
-    technicalSkills: string;
-    softSkills: string;
+    technicalSkills: Array<Skill>;
+    softSkills: Array<Skill>;
+}
+
+interface Skill {
+    name: string;
+    experience: string;
 }
 
 interface Availability {
     fullTimePartTime: string;
-    preferredWorkSchedule: string;
+    preferredWorkSchedule: string; 
 }
 
 interface RegisterInput {
@@ -76,20 +69,29 @@ interface LoginInput {
 interface UserResponse {
     success: boolean;
     message: string;
-    data: ResponseData;
-    token: string;
+    data?: ResponseData;
+    token?: string; 
 }
 
 interface ResponseData {
     name: string;
     email: string;
-    mobileNumber: string;
+    mobileNumber: string; 
+}
+
+interface UserProfileInput {
+    personalInformation: PersonalInformation;
+    professionalInformation: ProfessionalInformation;
+    educationalBackground: Array<EducationalBackground>;
+    workExperience: Array<WorkExperience>;
+    skills: Skills;
+    availability: Availability;
 }
 
 export {
     User,
-    UserProfile,
     RegisterInput,
     LoginInput,
     UserResponse,
+    UserProfileInput
 }

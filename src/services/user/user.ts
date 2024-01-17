@@ -1,10 +1,11 @@
-import { LoginInput, RegisterInput } from "../../interfaces/user";
+import { LoginInput, RegisterInput, UserProfileInput } from "../../interfaces/user";
 import User from '../../models/user';
 import errorMessages from '../../config/errorMessages.json';
 import successMessages from '../../config/successMessages.json';
 import { checkIfuserExists } from "../../handlers/user";
 import { GraphQLError } from "graphql";
 import { createToken, hashPassword, verifyToken, checkPassword } from "../../handlers/auth";
+import userProfile from "../../models/userProfile";
 
 class UserService {
     public static async createUser(payload: RegisterInput) {
@@ -27,6 +28,32 @@ class UserService {
                 company: payload.company,
                 designation: payload.designation,
             });
+
+            // create user profile
+            await userProfile.create({
+                userId: user._id,
+                personalInformation: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                },
+                professionalInformation: {
+                    resume: '',
+                    coverLetter: '',
+                    linkedInProfile: '',
+                    portfolio: '',
+                },
+                educationalBackground: [],
+                workExperience: [],
+                skills: {
+                    technicalSkills: [],
+                    softSkills: [],
+                },
+                availability: {
+                    fullTimePartTime: '',
+                    preferredWorkSchedule: '',
+                }
+            })
 
             // create a jwt token
             const token = createToken(user);
@@ -82,7 +109,7 @@ class UserService {
 
     private static async getUserByEmail(email: string) {
         try {
-            const user = await User.findOne({email})
+            const user = await User.findOne({ email })
             return user ? user : null;
         } catch (error) {
             console.log(error)
@@ -147,6 +174,55 @@ class UserService {
             return null;
         }
     }
+
+    public static async updateProfile(payload: UserProfileInput, email: string) {
+        console.log("payload", payload);
+        try {
+            const user = await this.getUserByEmail(email);
+            if (!user) {
+                throw new GraphQLError(errorMessages.userDoesNotExist);
+            }
+
+            const userProfileData = await userProfile.findOne({ userId: user._id });
+            if (!userProfileData) {
+                throw new GraphQLError(errorMessages.userProfileDoesNotExist);
+            }
+
+            // update user profile 
+            await userProfile.updateOne({
+                personalInformation: {
+                    firstName: payload?.personalInformation?.firstName || "",
+                    lastName: payload?.personalInformation?.lastName || "",
+                    address: payload?.personalInformation?.address || "",
+                },
+                professionalInformation: {
+                    resume: payload?.professionalInformation?.resume || "",
+                    coverLetter: payload?.professionalInformation?.coverLetter || "",
+                    linkedInProfile: payload?.professionalInformation?.linkedInProfile || "",
+                    portfolio: payload?.professionalInformation?.portfolio || "",
+                },
+                educationalBackground: payload?.educationalBackground || [],
+                workExperience: payload?.workExperience || [],
+                skills: {
+                    technicalSkills: payload?.skills?.technicalSkills || [],
+                    softSkills: payload?.skills?.softSkills || [],
+                },
+                availability: {
+                    fullTimePartTime: payload?.availability?.fullTimePartTime || "",
+                    preferredWorkSchedule: payload?.availability?.preferredWorkSchedule || "",
+                }
+            });
+
+            return {
+                message: successMessages.profileUpdateSuccess,
+                success: true,
+            }
+        } catch (error: any) {
+            console.log(error)
+            throw new GraphQLError(error);
+        }
+    }
+
 }
 
 export default UserService;

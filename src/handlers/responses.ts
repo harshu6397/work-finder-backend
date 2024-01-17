@@ -1,4 +1,4 @@
-const successResponse = (success: boolean, message: string, data: any) => {
+const successResponse = (success: boolean, message: string, data?: any) => {
     return {
         success,
         message,

@@ -13,11 +13,11 @@ export interface IUser extends Document {
 }
 
 export interface IUserProfile extends Document {
-    _id: string;
+    userId: Types.ObjectId;
     personalInformation: PersonalInformation;
     professionalInformation: professionalInformation;
-    educationalBackground: educationalBackground;
-    workExperience: workExperience;
+    educationalBackground: Array<educationalBackground>;
+    workExperience: Array<workExperience>;
     skills: skills;
     availability: availability;
 }
@@ -26,8 +26,6 @@ interface PersonalInformation {
     firstName: string;
     lastName: string;
     address: string;
-    phoneNumber: string;
-    emailAddress: string;
 }
 
 interface professionalInformation {
@@ -53,8 +51,13 @@ interface workExperience {
 }
 
 interface skills {
-    technicalSkills: string;
-    softSkills: string;
+    technicalSkills: Array<Skill>
+    softSkills: Array<Skill>
+}
+
+interface Skill {
+    name: string;
+    experience: string;
 }
 
 interface availability {

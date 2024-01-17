@@ -2,105 +2,42 @@ import { Model, Schema, model } from "mongoose";
 import { IUserProfile } from "../interfaces/model";
 
 const userProfileSchema: Schema = new Schema<IUserProfile>({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     personalInformation: {
-        firstName: {
-            type: String,
-            required: true,
-        },
-        lastName: {
-            type: String,
-            required: true,
-        },
-        address: {
-            type: String,
-            required: true,
-        },
-        phoneNumber: {
-            type: String,
-            required: true,
-        },
-        emailAddress: {
-            type: String,
-            required: true,
-        },
+        firstName: { type: String, },
+        lastName: { type: String, },
+        address: { type: String, },
     },
     professionalInformation: {
-        resume: {
-            type: String,
-            required: true,
-        },
-        coverLetter: {
-            type: String,
-            required: true,
-        },
-        linkedInProfile: {
-            type: String,
-            required: true,
-        },
-        portfolio: {
-            type: String,
-            required: true,
-        },
+        resume: { type: String, },
+        coverLetter: { type: String, },
+        linkedInProfile: { type: String, },
+        portfolio: { type: String, },
     },
-    educationalBackground: {
-        highestLevelOfEducation: {
-            type: String,
-            required: true,
-        },
-        schoolUniversityName: {
-            type: String,
-            required: true,
-        },
-        degreeEarned: {
-            type: String,
-            required: true,
-        },
-        graduationYear: {
-            type: String,
-            required: true,
-        },
-    },
-    workExperience: {
-        companyName: {
-            type: String,
-            required: true,
-        },
-        jobTitle: {
-            type: String,
-            required: true,
-        },
-        startDate: {
-            type: String,
-            required: true,
-        },
-        endDate: {
-            type: String,
-            required: true,
-        },
-        responsibilitiesAccomplishments: {
-            type: String,
-            required: true,
-        },
-    },
+    educationalBackground: [{
+        highestLevelOfEducation: { type: String, },
+        schoolUniversityName: { type: String, },
+        degreeEarned: { type: String, },
+        graduationYear: { type: String, },
+    }],
+    workExperience: [{
+        companyName: { type: String, },
+        jobTitle: { type: String, },
+        startDate: { type: String, },
+        endDate: { type: String, },
+        responsibilitiesAccomplishments: { type: String, },
+    }],
     skills: {
-        technicalSkills: {
-            type: String,
-            required: true,
-        },
-        softSkills: {
-            type: String,
-            required: true,
-        },
+        technicalSkills: [{ name: { type: String, }, experience: { type: String, }, }],
+        softSkills: [{ name: { type: String, }, experience: { type: String, }, }]
     },
     availability: {
-        fullTimePartTime: {
-            type: String,
-            required: true,
-        },
-        preferredWorkSchedule: {
-            type: String,
-            required: true,
-        },
+        fullTimePartTime: { type: String, default: 'Full Time' },
+        preferredWorkSchedule: { type: String, default: 'Day Shift' },
     },
 });
 
