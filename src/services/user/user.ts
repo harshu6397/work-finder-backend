@@ -1,11 +1,11 @@
 import { LoginInput, RegisterInput, UserProfileInput } from "../../interfaces/user";
-import User from '../../models/user';
+import User from '../../models/User';
+import UserProfile from "../../models/UserProfile";
 import errorMessages from '../../config/errorMessages.json';
 import successMessages from '../../config/successMessages.json';
 import { checkIfuserExists } from "../../handlers/user";
 import { GraphQLError } from "graphql";
 import { createToken, hashPassword, verifyToken, checkPassword } from "../../handlers/auth";
-import userProfile from "../../models/userProfile";
 
 class UserService {
     public static async createUser(payload: RegisterInput) {
@@ -30,7 +30,7 @@ class UserService {
             });
 
             // create user profile
-            await userProfile.create({
+            const profile = await UserProfile.create({
                 userId: user._id,
                 personalInformation: {
                     firstName: '',
@@ -54,6 +54,10 @@ class UserService {
                     preferredWorkSchedule: '',
                 }
             })
+            
+            // update user profile id in user
+            user.profile = profile._id;
+            await user.save();
 
             // create a jwt token
             const token = createToken(user);
@@ -107,42 +111,44 @@ class UserService {
         }
     }
 
-    private static async getUserByEmail(email: string) {
+    private static async getUserById(_id: string) {
         try {
-            const user = await User.findOne({ email })
+            const user = await User.findById({ _id }).populate('profile');
             return user ? user : null;
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
-            throw error;
+            throw new GraphQLError(error);
         }
     }
+
 
     public static async getUsers() {
         try {
             const users = await User.find();
             return users
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
             return []
         }
     }
 
-    public static async getUser(email: string) {
+    public static async getUser(_id: string) {
         try {
-            const user = await this.getUserByEmail(email);
+            const user = await this.getUserById(_id);
 
             if (!user) {
-                return null;
+                throw new GraphQLError(errorMessages.userDoesNotExist);
             }
 
             return {
                 name: user.name,
                 email: user.email,
                 mobileNumber: user.mobileNumber,
+                profile: user.profile,
             }
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
-            return null
+            throw new GraphQLError(error);
         }
     }
 
@@ -168,28 +174,28 @@ class UserService {
                 return null;
             }
 
-            return decodedToken.email;
+            return { _id: user._id, email: user.email };
         } catch (error) {
             console.log(error)
             return null;
         }
     }
 
-    public static async updateProfile(payload: UserProfileInput, email: string) {
+    public static async updateProfile(payload: UserProfileInput, _id: string) {
         console.log("payload", payload);
         try {
-            const user = await this.getUserByEmail(email);
+            const user = await this.getUserById(_id);
             if (!user) {
                 throw new GraphQLError(errorMessages.userDoesNotExist);
             }
 
-            const userProfileData = await userProfile.findOne({ userId: user._id });
+            const userProfileData = await UserProfile.findOne({ userId: user._id });
             if (!userProfileData) {
                 throw new GraphQLError(errorMessages.userProfileDoesNotExist);
             }
 
             // update user profile 
-            await userProfile.updateOne({
+            await UserProfile.updateOne({
                 personalInformation: {
                     firstName: payload?.personalInformation?.firstName || "",
                     lastName: payload?.personalInformation?.lastName || "",

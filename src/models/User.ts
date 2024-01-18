@@ -1,4 +1,4 @@
-import { Schema, model, Model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { IUser } from '../interfaces/model';
 import appconstansts from '../config/appconstants.json';
 

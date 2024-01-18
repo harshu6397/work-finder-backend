@@ -17,7 +17,7 @@ async function init() {
   app.use('/graphql',
     expressMiddleware(await createApolloServer(), {
       context: async ({ req }) => ({
-        email: await UserService.getUserFromToken(req.headers.authorization)
+        user: await UserService.getUserFromToken(req.headers.authorization)
       }),
     },
 

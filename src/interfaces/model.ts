@@ -64,3 +64,32 @@ interface availability {
     fullTimePartTime: string;
     preferredWorkSchedule: string;
 }
+
+export interface IJob extends Document {
+    title: string;
+    company: string;
+    jobLocation?: string;
+    description?: string;
+    salary?: Salary;
+    type?: string;
+    category?: string;
+    experience?: string;
+    skills?: string[];
+    deadline?: Date;
+    status?: string;
+    requirements?: string[];
+    responsibilities?: string[];
+    tags?: string[];
+    createdBy: Types.ObjectId;
+    updatedBy?: Types.ObjectId;
+    postedAt: Date;
+    updatedAt: Date;
+    expiresAt?: Date;
+    applications?: Types.ObjectId[];
+}
+
+interface Salary {
+    min: number;
+    max: number;
+    currency: string;    
+}

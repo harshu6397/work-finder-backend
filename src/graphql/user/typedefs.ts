@@ -55,8 +55,13 @@ export const typeDefs = `#graphql
     }
 
     type Skills {
-        technicalSkills: String
-        softSkills: String
+        technicalSkills: [SkillOutput]
+        softSkills: [SkillOutput]
+    }
+
+    type SkillOutput {
+        name: String
+        experience: String
     }
 
     type Availability {
@@ -67,11 +72,11 @@ export const typeDefs = `#graphql
     type UserResponse { 
         success: Boolean!
         message: String!
-        data: ResponseData
+        data: UserResponseData
         token: String
     }   
 
-    type ResponseData {
+    type UserResponseData {
         name: String
         email: String
         mobileNumber: String    
@@ -132,7 +137,7 @@ export const typeDefs = `#graphql
         name: String!
         email: String!
         password: String!
-        mobileNumber: String!
+        mobileNumber: String! 
         confirmPassword: String!
         company: String
         designation: String
@@ -144,11 +149,11 @@ export const typeDefs = `#graphql
         password: String!
     }
 
-    type Query {
+    extend type Query {
         ${queries}
     }
 
-    type Mutation {
+    extend type Mutation {
         ${mutations}
     }
 `;

@@ -1,4 +1,4 @@
-import { createUserSchema, loginUserSchema, updateUserProfileSchema } from '../../validations';
+import { createUserSchema, loginUserSchema, updateUserProfileSchema } from '../../validations/user';
 import { LoginInput, RegisterInput, UserProfileInput } from '../../interfaces/user';
 import { GraphQLError } from 'graphql';
 import { successResponse } from '../../handlers/responses';
@@ -7,8 +7,8 @@ import UserService from '../../services/user/user';
 
 const queries = {
     getUsers: async () => await UserService.getUsers(),
-    getUser: async (_: any, __: any, contextValue: any) => {
-        return await UserService.getUser(contextValue.email)
+    getUser: async (_: any, __: any, { user }: any) => {
+        return await UserService.getUser(user._id);
     }
 }
 
@@ -21,7 +21,7 @@ const mutations = {
             const response = await UserService.createUser(userInput);
 
             return successResponse(
-                response.success,   
+                response.success,
                 response.message,
                 {
                     data: {
@@ -61,13 +61,12 @@ const mutations = {
         }
     },
 
-    updateUserProfile: async (_: any, { userInput }: { userInput: UserProfileInput }, contextValue: any) => {
+    updateUserProfile: async (_: any, { userInput }: { userInput: UserProfileInput }, { user }: any) => {
         try {
-            console.log(contextValue)
             // Validate user input
             validateUserInput(userInput, updateUserProfileSchema);
 
-            const response = await UserService.updateProfile(userInput, contextValue.email);
+            const response = await UserService.updateProfile(userInput, user._id);
 
             return successResponse(
                 response.success,
