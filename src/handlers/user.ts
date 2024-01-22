@@ -10,7 +10,6 @@ import { GraphQLError } from "graphql";
 export const checkIfuserExists = async (email: string) => {
     try {
         const user = await User.findOne({email});
-        console.log(":::: user ::::", user);
         if (user) {
             return true;
         } 
