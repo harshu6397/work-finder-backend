@@ -32,7 +32,7 @@ async function createApolloServer() {
         };
       }
 
-      console.log(":::: formattedError ::::", formattedError);
+      console.log(":::: In Server:: formattedError ::::", formattedError);
       return errorResponse(
         formattedError?.extensions?.code === ApolloServerErrorCode?.BAD_USER_INPUT ? errorMessages.somethingWentWrong : formattedError?.message,
         formattedError?.extensions?.code === ApolloServerErrorCode?.BAD_USER_INPUT ? 400 : 500,
